@@ -1,6 +1,11 @@
 module.exports ={
+
+    //mysql
     mysqlhost : 'localhost',
     mysqluser: 'hrmsadmin',
     mysqldb: 'hrms',
-    mysqlpassword: 'password'
+    mysqlpassword: 'password',
+
+    //authentication
+    secretkey: 'cloudee'
 }
