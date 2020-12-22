@@ -6,10 +6,9 @@ var logger = require ('morgan');
 
 var indexRouter = require ('./routes/index');
 var usersRouter = require ('./routes/users');
-
+var EmployeeRouter = require ('./routes/EmployeeRouter');
 var app = express ();
 
-const config = require('./config');
 // view engine setup
 app.set ('views', path.join (__dirname, 'views'));
 app.set ('view engine', 'jade');
@@ -19,29 +18,12 @@ app.use (express.json ());
 app.use (express.urlencoded ({extended: false}));
 app.use (cookieParser ());
 app.use (express.static (path.join (__dirname, 'public')));
-var mysql = require ('mysql');
-var connection = mysql.createConnection ({
-  host: config.mysqlhost,
-  user: config.mysqluser,
-  password: config.mysqlpassword,
-  database: config.mysqldb
-});
-connection.connect (function (err) {
-  if (err) {
-    return console.error ('error: ' + err.message);
-  }
-  console.log ('Connected to the MySQL server.');
-});
 
-connection.query ('select * from employees', (err, result, fields) => {
-  if (err) throw err;
-  console.log (result);
-});
 
 
 app.use ('/', indexRouter);
 app.use ('/users', usersRouter);
-
+app.use ('/employees', EmployeeRouter);
 // catch 404 and forward to error handler
 app.use (function (req, res, next) {
   next (createError (404));
