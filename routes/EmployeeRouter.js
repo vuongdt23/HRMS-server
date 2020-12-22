@@ -5,7 +5,6 @@ const config = require ('../config');
 const employeeRouter = express.Router ();
 employeeRouter.use (bodyParser.json ());
 var mysql = require ('mysql');
-const {json} = require ('body-parser');
 var connection = mysql.createConnection ({
   host: config.mysqlhost,
   user: config.mysqluser,
@@ -93,7 +92,34 @@ employeeRouter
   })
   .post ((req, res, next) => {
     res.statusCode = 403;
-    res.end ('POST operation not supported on /employees/' + req.params.dishId);
+    res.end ('POST operation not supported on /employees/' + req.params.EmployeeId);
+  })
+  .put ((req, res, next) => {
+    let updatevalue = {
+      name: req.body.name,
+      phone: req.body.phone,
+      address: req.body.address,
+      descr: req.body.descr,
+      email: req.body.email,
+    };
+    connection.query (
+      'update employees set name = ?, phone = ?, address = ? , descr = ?, email = ? where id = ' + req.params.EmployeeId,
+      [
+        updatevalue.name,
+        updatevalue.phone,
+        updatevalue.address,
+        updatevalue.descr,
+        updatevalue.email,
+      ],
+      (err, result) => {
+        if (err) return next (err);
+        else if (result) {
+          res.statusCode = 200;
+          res.setHeader ('Content-Type', 'application/json');
+          res.json (result);
+        }
+      }
+    );
   });
 
 module.exports = employeeRouter;
