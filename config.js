@@ -7,5 +7,5 @@ module.exports ={
     mysqlpassword: 'password',
 
     //authentication
-    secretkey: 'cloudee'
+    secretKey: '12345-67890-09876-54321'
 }

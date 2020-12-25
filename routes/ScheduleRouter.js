@@ -67,6 +67,14 @@ ScheduleRouter.route ('/employees')
     });
   })
   .post((req, res, next) => {
-     //to do
-  });
+     //to do: add schedules to specific user
+
+  })
+  .put((req, res, next)=>{
+      //not supported
+  })
+  .delete();
+  
+
+
 module.exports = ScheduleRouter;

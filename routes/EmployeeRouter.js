@@ -1,7 +1,7 @@
 const express = require ('express');
 const bodyParser = require ('body-parser');
 const config = require ('../config');
-
+const authenticate = require('../authenticate');
 const employeeRouter = express.Router ();
 employeeRouter.use (bodyParser.json ());
 var mysql = require ('mysql');
@@ -11,14 +11,13 @@ var connection = mysql.createConnection ({
   password: config.mysqlpassword,
   database: config.mysqldb,
 });
-
 connection.connect (err => {
   if (err) next (err);
 });
 
 employeeRouter
   .route ('/')
-  .get ((req, res, next) => {
+  .get (authenticate.verifyUser, (req, res, next) => {
     connection.query ('Select * from Employees', (err, result) => {
       if (err) {
         return next (err);
