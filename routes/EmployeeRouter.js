@@ -17,7 +17,7 @@ connection.connect (err => {
 
 employeeRouter
   .route ('/')
-  .get (authenticate.verifyUser, (req, res, next) => {
+  .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     connection.query ('Select * from Employees', (err, result) => {
       if (err) {
         return next (err);

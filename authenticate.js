@@ -19,9 +19,8 @@ connection.connect (err => {
 });
 
 passport.serializeUser (function (user, done) {
-  console.log('user:', user);
+  console.log ('user:', user);
   done (null, user.id);
-
 });
 
 passport.deserializeUser ((id, done) => {
@@ -29,7 +28,7 @@ passport.deserializeUser ((id, done) => {
     'select * from useraccounts where id = ' + id,
     (err, result) => {
       done (err, result[0]);
-      console.log(result[0]);
+      console.log (result[0]);
     }
   );
 });
@@ -54,14 +53,14 @@ exports.local = passport.use (
 );
 
 exports.getToken = function (user) {
-  console.log("user: ");
-  console.log(user);
-  console.log("user: ");
+  console.log ('user: ');
+  console.log (user);
+  console.log ('user: ');
   return jwt.sign (user, config.secretKey, {expiresIn: 3600});
 };
 
 var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken ();
 opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use (
@@ -73,8 +72,8 @@ exports.jwtPassport = passport.use (
         if (err) {
           return done (err, false);
         } else if (user) {
-          console.log (jwt_payload._id);
-          console.log (user);
+         // console.log (jwt_payload._id);
+         // console.log (user[0]);
           return done (null, user[0]);
         } else {
           return done (null, false);
@@ -87,19 +86,37 @@ exports.jwtPassport = passport.use (
 exports.verifyUser = passport.authenticate ('jwt', {session: false});
 
 exports.verifyAdmin = function (req, res, next) {
-  User.findOne ({_id: req.user._id})
-    .then (
-      user => {
-        console.log ('User: ', req.user);
-        if (user.admin) {
-          next ();
-        } else {
+  console.log("Useraaaaaaaaaaaaaaaa: ", req.user);
+  connection.query (
+    "select * from useraccounts where `id` = '" + req.user.id + "'",
+    (err, user) => {
+
+      if (err) {
+        return next (err);
+      } else if (user) {
+        //console.log ('User: ', user);
+        if (user[0].permission == 'admin') next ();
+        else {
           err = new Error ('You are not authorized to perform this operation!');
           err.status = 403;
           return next (err);
         }
-      },
-      err => next (err)
-    )
-    .catch (err => next (err));
+      }
+    }
+  );
+  // User.findOne ({_id: req.user._id})
+  //   .then (
+  //     user => {
+  //       console.log ('User: ', req.user);
+  //       if (user.admin) {
+  //         next ();
+  //       } else {
+  //         err = new Error ('You are not authorized to perform this operation!');
+  //         err.status = 403;
+  //         return next (err);
+  //       }
+  //     },
+  //     err => next (err)
+  //   )
+  //   .catch (err => next (err));
 };
