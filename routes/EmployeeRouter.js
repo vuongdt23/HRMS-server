@@ -34,18 +34,20 @@ employeeRouter
       name: req.body.name,
       phone: req.body.phone,
       address: req.body.address,
-      descr: req.body.descr,
       email: req.body.email,
+      position: req.body.position,
+     
     };
-    console.log (JSON.stringify (insertvalue));
+    console.log (insertvalue);
     connection.query (
-      'Insert into Employees (name, phone, address, descr, email) values (?, ?, ?, ?, ?);',
+      'Insert into Employees (name, phone, address, email, position) values (?, ?, ?, ?, ?);',
       [
         insertvalue.name,
         insertvalue.phone,
         insertvalue.address,
-        insertvalue.descr,
         insertvalue.email,
+        insertvalue.position,
+        
       ],
       (err, result) => {
         if (err) return next (err);
