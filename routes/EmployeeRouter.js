@@ -75,7 +75,8 @@ employeeRouter
 
 employeeRouter
   .route ('/:EmployeeId')
-  .get ((req, res, next) => {
+  .get (authenticate.verifyUser, (req, res, next) => {
+    console.log(req.user);
     connection.query (
       'Select * from Employees where id = ' + req.params.EmployeeId,
       (err, result) => {

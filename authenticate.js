@@ -86,7 +86,7 @@ exports.jwtPassport = passport.use (
 exports.verifyUser = passport.authenticate ('jwt', {session: false});
 
 exports.verifyAdmin = function (req, res, next) {
-  console.log("Useraaaaaaaaaaaaaaaa: ", req.user);
+ 
   connection.query (
     "select * from useraccounts where `id` = '" + req.user.id + "'",
     (err, user) => {
