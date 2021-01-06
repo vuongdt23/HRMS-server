@@ -29,7 +29,7 @@ employeeRouter
       }
     });
   })
-  .post ((req, res, next) => {
+  .post ( (req, res, next) => {
     let insertvalue = {
       name: req.body.name,
       phone: req.body.phone,
