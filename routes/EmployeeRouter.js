@@ -18,7 +18,7 @@ connection.connect (err => {
 employeeRouter
   .route ('/')
   .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    connection.query ('Select * from Employees', (err, result) => {
+    connection.query ('Select  * from Employees join departments on Employees.department = Departments.depid join payroll on Employees.payroll = Payroll.payrollid join positions on Employees.position = positions.posid', (err, result) => {
       if (err) {
         return next (err);
       } else if (result) {
@@ -36,16 +36,21 @@ employeeRouter
       address: req.body.address,
       email: req.body.email,
       position: req.body.position,
+      department: req.body.department,
+      payroll: req.body.payroll
     };
     console.log (insertvalue);
     connection.query (
-      'Insert into Employees (name, phone, address, email, position) values (?, ?, ?, ?, ?);',
+      'Insert into Employees (name, phone, address, email, position, department, payroll) values (?, ?, ?, ?, ?, ?, ?)',
       [
         insertvalue.name,
         insertvalue.phone,
         insertvalue.address,
         insertvalue.email,
         insertvalue.position,
+        insertvalue.department,
+        insertvalue.payroll
+        
       ],
       (err, result) => {
         if (err) return next (err);
@@ -75,7 +80,7 @@ employeeRouter
 
 employeeRouter
   .route ('/:EmployeeId')
-  .get (authenticate.verifyUser, (req, res, next) => {
+  .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     console.log (req.user);
     connection.query (
       'Select * from Employees where id = ' + req.params.EmployeeId,
@@ -100,9 +105,11 @@ employeeRouter
     let updatevalue = {
       name: req.body.name,
       phone: req.body.phone,
-      address: req.body.address,
-      descr: req.body.descr,
+      address: req.body.address,     
       email: req.body.email,
+      department: req.body.department,
+      position: req.body.position,
+      payroll: req.body.payroll
     };
     connection.query (
       'update employees set name = ?, phone = ?, address = ? , descr = ?, email = ? where id = ' +
@@ -111,8 +118,8 @@ employeeRouter
         updatevalue.name,
         updatevalue.phone,
         updatevalue.address,
-        updatevalue.descr,
         updatevalue.email,
+
       ],
       (err, result) => {
         if (err) return next (err);

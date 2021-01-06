@@ -55,7 +55,7 @@ ScheduleRouter.route ('/employees')
 
   ScheduleRouter.route ('/employees/:EmployeeId')
   .get ((req, res, next) => {
-    connection.query ('Select * from Schedules where id = '+ req.params.EmployeeId, (err, result) => {
+    connection.query ('Select * from Schedules where eid = '+ req.params.EmployeeId, (err, result) => {
       if (err) {
         return next (err);
       } else if (result) {
