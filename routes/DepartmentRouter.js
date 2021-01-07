@@ -51,12 +51,33 @@ DepartmentRouter.route ('/')
       );
     }
   );
-DepartmentRouter.route('/:depID').delete (
-  authenticate.verifyUser,
-  authenticate.verifyAdmin,
-  (req, res, next) => {
+DepartmentRouter.route ('/:depID')
+  .delete (
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      connection.query (
+        'Delete from departments where depid = ' + req.params.depID,
+        (err, result) => {
+          if (err) return next (err);
+          else if (result) {
+            res.statusCode = 200;
+            res.setHeader ('Content-Type', 'application/json');
+            res.json (result);
+          }
+        }
+      );
+    }
+  )
+  .put (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    let updatevalue = {
+      depname: req.body.depname,
+      depdescr: req.body.depdescr,
+    };
     connection.query (
-      'Delete from departments where depid = ' + req.params.depID,
+      'update departments set depname =?, depdescr =? where depid = ' +
+        req.params.depID,
+      [updatevalue.depname, updatevalue.depdescr],
       (err, result) => {
         if (err) return next (err);
         else if (result) {
@@ -66,6 +87,19 @@ DepartmentRouter.route('/:depID').delete (
         }
       }
     );
-  }
-);
+  })
+  .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    connection.query (
+      'Select * from departments where depid = ' + req.params.depID,
+      (err, result) => {
+        if (err) {
+          return next (err);
+        } else if (result) {
+          res.statusCode = 200;
+          res.setHeader ('Content-Type', 'application/json');
+          res.json (result);
+        }
+      }
+    );
+  });
 module.exports = DepartmentRouter;
