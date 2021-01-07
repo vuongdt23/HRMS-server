@@ -38,7 +38,7 @@ PositionRouter.route ('/')
       };
       connection.query (
         'insert into positions (posname, posdescr) values(?, ?)',
-        [insertvalue.posdescr, insertvalue.posdescr],
+        [insertvalue.posname, insertvalue.posdescr],
         (err, result) => {
           if (err) return next (err);
           else {
@@ -52,7 +52,7 @@ PositionRouter.route ('/')
     }
   );
 
-  PositionRouter.route ('/:posID')
+PositionRouter.route ('/:posID')
   .delete (
     authenticate.verifyUser,
     authenticate.verifyAdmin,
@@ -72,13 +72,13 @@ PositionRouter.route ('/')
   )
   .put (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     let updatevalue = {
-      posname: req.body.depname,
-      posdescr: req.body.depdescr,
+      posname: req.body.posname,
+      posdescr: req.body.posdescr,
     };
     connection.query (
-      'update positions set posname =?, posdescr =? where depid = ' +
-        req.params.depID,
-      [updatevalue.posname, updatevalue.posname],
+      'update positions set posname =?, posdescr =? where posid = ' +
+        req.params.posID,
+      [updatevalue.posname, updatevalue.posdescr],
       (err, result) => {
         if (err) return next (err);
         else if (result) {
