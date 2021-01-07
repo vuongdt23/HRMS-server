@@ -52,4 +52,55 @@ PositionRouter.route ('/')
     }
   );
 
+  PositionRouter.route ('/:posID')
+  .delete (
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      connection.query (
+        'Delete from positions where posid = ' + req.params.posID,
+        (err, result) => {
+          if (err) return next (err);
+          else if (result) {
+            res.statusCode = 200;
+            res.setHeader ('Content-Type', 'application/json');
+            res.json (result);
+          }
+        }
+      );
+    }
+  )
+  .put (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    let updatevalue = {
+      posname: req.body.depname,
+      posdescr: req.body.depdescr,
+    };
+    connection.query (
+      'update positions set posname =?, posdescr =? where depid = ' +
+        req.params.depID,
+      [updatevalue.posname, updatevalue.posname],
+      (err, result) => {
+        if (err) return next (err);
+        else if (result) {
+          res.statusCode = 200;
+          res.setHeader ('Content-Type', 'application/json');
+          res.json (result);
+        }
+      }
+    );
+  })
+  .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    connection.query (
+      'Select * from positions where posid = ' + req.params.posID,
+      (err, result) => {
+        if (err) {
+          return next (err);
+        } else if (result) {
+          res.statusCode = 200;
+          res.setHeader ('Content-Type', 'application/json');
+          res.json (result);
+        }
+      }
+    );
+  });
 module.exports = PositionRouter;
