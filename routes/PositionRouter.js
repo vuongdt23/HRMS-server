@@ -1,7 +1,7 @@
 const express = require ('express');
 const bodyParser = require ('body-parser');
 const config = require ('../config');
-const authenticate = require('../authenticate');
+const authenticate = require ('../authenticate');
 const PositionRouter = express.Router ();
 PositionRouter.use (bodyParser.json ());
 var mysql = require ('mysql');
@@ -16,18 +16,40 @@ connection.connect (err => {
 });
 
 PositionRouter.route ('/')
-.get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-  connection.query ('Select * from Positions', (err, result) => {
-    if (err) {
-      return next (err);
-    } else if (result) {
-      res.statusCode = 200;
-      res.setHeader ('Content-Type', 'application/json');
-      res.json (result);
-      //    connection.close ();
+  .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    connection.query ('Select * from Positions', (err, result) => {
+      if (err) {
+        return next (err);
+      } else if (result) {
+        res.statusCode = 200;
+        res.setHeader ('Content-Type', 'application/json');
+        res.json (result);
+        //    connection.close ();
+      }
+    });
+  })
+  .post (
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      let insertvalue = {
+        posname: req.body.posname,
+        posdescr: req.body.posdescr,
+      };
+      connection.query (
+        'insert into positions (posname, posdescr) values(?, ?)',
+        [insertvalue.posdescr, insertvalue.posdescr],
+        (err, result) => {
+          if (err) return next (err);
+          else {
+            res.statusCode = 200;
+            res.setHeader ('Content-Type', 'application/json');
+            res.json (result);
+            //  connection.close ();
+          }
+        }
+      );
     }
-  });
-});
+  );
 
 module.exports = PositionRouter;
-
