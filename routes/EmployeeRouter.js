@@ -18,7 +18,7 @@ connection.connect (err => {
 employeeRouter
   .route ('/')
   .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    connection.query ('Select  * from Employees join departments on Employees.department = Departments.depid join payroll on Employees.payroll = Payroll.payrollid join positions on Employees.position = positions.posid', (err, result) => {
+    connection.query ('Select  * from Employees left join departments on Employees.department = Departments.depid left join payroll on Employees.payroll = Payroll.payrollid left join positions on Employees.position = positions.posid', (err, result) => {
       if (err) {
         return next (err);
       } else if (result) {
@@ -112,13 +112,16 @@ employeeRouter
       payroll: req.body.payroll
     };
     connection.query (
-      'update employees set name = ?, phone = ?, address = ? , descr = ?, email = ? where id = ' +
+      'update employees set employees.name = ?, phone = ?, address = ? , email = ?, department = ?, position = ?, payroll = ? where id = ' +
         req.params.EmployeeId,
       [
         updatevalue.name,
         updatevalue.phone,
         updatevalue.address,
         updatevalue.email,
+        updatevalue.department,
+        updatevalue.position,
+        updatevalue.payroll
 
       ],
       (err, result) => {
