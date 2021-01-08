@@ -11,6 +11,7 @@ var ScheduleRouter = require ('./routes/ScheduleRouter');
 var PositionRouter = require ('./routes/PositionRouter');
 var DepartmetnRouter = require ('./routes/DepartmentRouter');
 var PayRollRouter = require ('./routes/PayrollRouter');
+var RequestRouter = require ('./routes/RequestRouter');
 var app = express ();
 var passport = require ('passport');
 
@@ -33,6 +34,7 @@ app.use ('/schedules', ScheduleRouter);
 app.use ('/positions', PositionRouter);
 app.use ('/departments', DepartmetnRouter);
 app.use ('/payroll', PayRollRouter);
+app.use('/request', RequestRouter);
 // catch 404 and forward to error handler
 app.use (function (req, res, next) {
   next (createError (404));
