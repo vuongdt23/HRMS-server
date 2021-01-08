@@ -18,16 +18,19 @@ connection.connect (err => {
 employeeRouter
   .route ('/')
   .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    connection.query ('Select  * from Employees left join departments on Employees.department = Departments.depid left join payroll on Employees.payroll = Payroll.payrollid left join positions on Employees.position = positions.posid', (err, result) => {
-      if (err) {
-        return next (err);
-      } else if (result) {
-        res.statusCode = 200;
-        res.setHeader ('Content-Type', 'application/json');
-        res.json (result);
-        //    connection.close ();
+    connection.query (
+      'Select  * from Employees left join departments on Employees.department = Departments.depid left join payroll on Employees.payroll = Payroll.payrollid left join positions on Employees.position = positions.posid',
+      (err, result) => {
+        if (err) {
+          return next (err);
+        } else if (result) {
+          res.statusCode = 200;
+          res.setHeader ('Content-Type', 'application/json');
+          res.json (result);
+          //    connection.close ();
+        }
       }
-    });
+    );
   })
   .post ((req, res, next) => {
     let insertvalue = {
@@ -37,7 +40,7 @@ employeeRouter
       email: req.body.email,
       position: req.body.position,
       department: req.body.department,
-      payroll: req.body.payroll
+      payroll: req.body.payroll,
     };
     console.log (insertvalue);
     connection.query (
@@ -49,8 +52,7 @@ employeeRouter
         insertvalue.email,
         insertvalue.position,
         insertvalue.department,
-        insertvalue.payroll
-        
+        insertvalue.payroll,
       ],
       (err, result) => {
         if (err) return next (err);
@@ -80,10 +82,11 @@ employeeRouter
 
 employeeRouter
   .route ('/:EmployeeId')
-  .get (authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+  .get (authenticate.verifyUser, (req, res, next) => {
     console.log (req.user);
     connection.query (
-      'Select * from Employees where id = ' + req.params.EmployeeId,
+      'Select  * from Employees left join departments on Employees.department = Departments.depid left join payroll on Employees.payroll = Payroll.payrollid left join positions on Employees.position = positions.posid where id =' +
+        req.params.EmployeeId,
       (err, result) => {
         if (err) {
           return next (err);
@@ -105,11 +108,11 @@ employeeRouter
     let updatevalue = {
       name: req.body.name,
       phone: req.body.phone,
-      address: req.body.address,     
+      address: req.body.address,
       email: req.body.email,
       department: req.body.department,
       position: req.body.position,
-      payroll: req.body.payroll
+      payroll: req.body.payroll,
     };
     connection.query (
       'update employees set employees.name = ?, phone = ?, address = ? , email = ?, department = ?, position = ?, payroll = ? where id = ' +
@@ -121,8 +124,7 @@ employeeRouter
         updatevalue.email,
         updatevalue.department,
         updatevalue.position,
-        updatevalue.payroll
-
+        updatevalue.payroll,
       ],
       (err, result) => {
         if (err) return next (err);
